@@ -584,6 +584,85 @@ footer{background:var(--bark);padding:72px 52px 44px;}
   .ft-top{grid-template-columns:1fr;}
   .res-hours{flex-direction:column;gap:20px;}
 }
+
+/* ── SPLIT CHAR ANIMATION ── */
+.char-wrap{overflow:hidden;display:inline-block;vertical-align:top;}
+.char{display:inline-block;transform:translateY(110%) rotate(4deg);opacity:0;will-change:transform,opacity;}
+
+/* ── CLIP-PATH REVEAL ── */
+.clip-reveal{
+  clip-path:inset(0 100% 0 0);
+  transition:clip-path 1s cubic-bezier(0.16,1,0.3,1);
+}
+.clip-reveal.in{ clip-path:inset(0 0% 0 0); }
+
+/* ── IMAGE 3D TILT ── */
+.tilt-card{
+  transform-style:preserve-3d;
+  transition:transform .1s linear;
+  will-change:transform;
+}
+.tilt-card-inner{
+  transform:translateZ(20px);
+}
+
+/* ── MAGNETIC BUTTON ── */
+.mag-btn{
+  position:relative;
+  transition:transform .4s cubic-bezier(0.23,1,0.32,1);
+  display:inline-flex;align-items:center;
+}
+
+/* ── COUNTER ── */
+.count-num{
+  display:inline-block;
+  transition:transform .8s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* ── HORIZONTAL LINE WIPE ── */
+.line-wipe{
+  display:inline-block;
+  clip-path:inset(0 100% 0 0);
+  transition:clip-path 1.2s cubic-bezier(0.16,1,0.3,1);
+}
+.line-wipe.in{ clip-path:inset(0 0% 0 0); }
+
+/* ── STAGGER REVEAL ── */
+.stagger-parent .stagger-child{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.stagger-parent.in .stagger-child:nth-child(1){opacity:1;transform:none;transition-delay:.05s;}
+.stagger-parent.in .stagger-child:nth-child(2){opacity:1;transform:none;transition-delay:.15s;}
+.stagger-parent.in .stagger-child:nth-child(3){opacity:1;transform:none;transition-delay:.25s;}
+.stagger-parent.in .stagger-child:nth-child(4){opacity:1;transform:none;transition-delay:.35s;}
+
+/* ── FEATURE IMG OVERLAY SWEEP ── */
+.feature-img::after{
+  content:'';
+  position:absolute;inset:0;
+  background:var(--sand);
+  transform:scaleX(1);
+  transform-origin:left;
+  transition:transform 1s cubic-bezier(0.16,1,0.3,1);
+  z-index:3;
+}
+.feature-img.in::after{ transform:scaleX(0);transform-origin:right; }
+
+/* ── DISH PANEL text wipe ── */
+.dish-info .dish-tag,
+.dish-info .dish-name,
+.dish-info .dish-desc,
+.dish-info .dish-detail{
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.dish-panel.active .dish-info .dish-tag  { opacity:1;transform:none;transition-delay:.0s; }
+.dish-panel.active .dish-info .dish-name { opacity:1;transform:none;transition-delay:.1s; }
+.dish-panel.active .dish-info .dish-desc { opacity:1;transform:none;transition-delay:.2s; }
+.dish-panel.active .dish-info .dish-detail{ opacity:1;transform:none;transition-delay:.3s; }
 </style>
 </head>
 <body>
@@ -605,7 +684,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
     <li><a href="ember-about.html">About</a></li>
     <li><a href="ember-reservations.html">Location</a></li>
   </ul>
-  <a href="ember-reservations.html" class="nav-reserve">Reserve a Table</a>
+  <a href="ember-reservations.html" class="nav-reserve mag-btn">Reserve a Table</a>
 </nav>
 
 <!-- HERO -->
@@ -635,7 +714,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
     </div>
     <div class="hero-right">
       <p class="hero-sub">A coastal table shaped by fire, salt, and the generosity of the Mediterranean shore.</p>
-      <a href="ember-reservations.html" class="btn-reserve">Reserve a Table</a>
+      <a href="ember-reservations.html" class="btn-reserve mag-btn">Reserve a Table</a>
     </div>
   </div>
   <div class="hero-scroll">
@@ -682,7 +761,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
 </section>
 
 <!-- FEATURE IMAGE 1 -->
-<div class="feature-img rv">
+<div class="feature-img rv tilt-card">
   <div class="feature-img-inner fi-1" id="parallax1" style="background-image:url('https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
   <div class="feature-img-overlay"></div>
   <div class="feature-img-caption">
@@ -702,8 +781,8 @@ footer{background:var(--bark);padding:72px 52px 44px;}
       </div>
       <div class="sh-right rv d1"><a href="ember-menu.html">Full menu</a></div>
     </div>
-    <div class="menu-categories">
-      <div class="menu-cat rv d1">
+    <div class="menu-categories stagger-parent rv">
+      <div class="menu-cat stagger-child">
         <div class="mc-title">From the Sea</div>
         <div class="mc-items">
           <div class="mc-item">
@@ -724,7 +803,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
           </div>
         </div>
       </div>
-      <div class="menu-cat rv d2">
+      <div class="menu-cat stagger-child">
         <div class="mc-title">From the Land</div>
         <div class="mc-items">
           <div class="mc-item">
@@ -745,7 +824,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
           </div>
         </div>
       </div>
-      <div class="menu-cat rv d3">
+      <div class="menu-cat stagger-child">
         <div class="mc-title">To Finish</div>
         <div class="mc-items">
           <div class="mc-item">
@@ -864,17 +943,17 @@ footer{background:var(--bark);padding:72px 52px 44px;}
     </div>
     <div class="exp-grid">
       <div class="exp-cell rv d1">
-        <div class="exp-num">48</div>
+        <div class="exp-num"><span class="count-num" data-target="48" data-suffix="">0</span></div>
         <div class="exp-label">Seats</div>
         <div class="exp-desc">Intimate by design. Every table has a view of the kitchen hearth.</div>
       </div>
       <div class="exp-cell rv d2">
-        <div class="exp-num">1</div>
+        <div class="exp-num"><span class="count-num" data-target="1" data-suffix="">0</span></div>
         <div class="exp-label">Fire</div>
         <div class="exp-desc">One wood-fired hearth. Every dish passes through its heat.</div>
       </div>
       <div class="exp-cell rv d3">
-        <div class="exp-num">Daily</div>
+        <div class="exp-num"><span class="count-num" data-daily="true">Daily</span></div>
         <div class="exp-label">Menu</div>
         <div class="exp-desc">We write the menu each morning. Yesterday's is already gone.</div>
       </div>
@@ -883,7 +962,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
 </section>
 
 <!-- FEATURE IMAGE 2 -->
-<div class="feature-img rv">
+<div class="feature-img rv tilt-card">
   <div class="feature-img-inner fi-2" id="parallax2" style="background-image:url('https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
   <div class="feature-img-overlay" style="background:linear-gradient(to left,rgba(28,25,22,.7) 0%,rgba(28,25,22,.2) 50%,transparent 100%)"></div>
   <div class="feature-img-caption" style="left:auto;right:52px;text-align:right;">
@@ -1005,10 +1084,9 @@ const liv=setInterval(()=>{
   ldFill.style.width=lp+'%';
 },60);
 
-/* ── HERO ANIMATION ── */
+/* ── HERO ANIMATION ── (overridden by bootHero below after char split) */
 function bootHero(){
-  const lines=document.querySelectorAll('.line-inner');
-  gsap.to(lines,{y:0,duration:1.2,stagger:.18,ease:'power4.out',delay:.1});
+  /* will be overridden after splitAndAnimate is defined */
   gsap.to('.hero-eyebrow',{opacity:1,y:0,duration:.8,delay:.5,ease:'power3.out'});
   gsap.to('.hero-right',{opacity:1,y:0,duration:.8,delay:.8,ease:'power3.out'});
   gsap.to('.hero-scroll',{opacity:1,duration:.6,delay:1.2});
@@ -1189,11 +1267,150 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   });
 })();
 
-/* ── SCROLL REVEAL ── */
-const ro=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
-},{threshold:.1});
-document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+/* ══════════════════════════════════════════════
+   SPLIT CHARACTER HERO ANIMATION
+   Each letter of the headline animates in
+   individually with a spring stagger
+══════════════════════════════════════════════ */
+function splitAndAnimate(){
+  const lines = document.querySelectorAll('.hero-h1 .line-inner');
+  lines.forEach((line, li) => {
+    const text = line.innerHTML;
+    // Wrap each char (preserve <em> tags)
+    const wrapped = text.replace(/(<em>.*?<\/em>|.)/gs, (match) => {
+      if(match.startsWith('<em>')) return match; // keep em tags intact
+      if(match === ' ') return '<span class="char-wrap"> </span>';
+      return `<span class="char-wrap"><span class="char">${match}</span></span>`;
+    });
+    line.innerHTML = wrapped;
+
+    // Animate each char with GSAP
+    const chars = line.querySelectorAll('.char');
+    gsap.to(chars, {
+      y: 0,
+      opacity: 1,
+      rotate: 0,
+      duration: 0.9,
+      stagger: 0.028,
+      ease: 'power4.out',
+      delay: 0.3 + li * 0.18,
+    });
+  });
+
+  // Also animate the em italic word inside
+  const emChars = document.querySelectorAll('.hero-h1 em');
+  emChars.forEach(em => {
+    gsap.fromTo(em, { opacity:0, y:20 }, { opacity:1, y:0, duration:.8, delay:0.9, ease:'power3.out' });
+  });
+}
+
+/* ══════════════════════════════════════════════
+   MAGNETIC CURSOR EFFECT
+   Buttons attract the cursor when hovering nearby
+══════════════════════════════════════════════ */
+document.querySelectorAll('.mag-btn').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width  / 2;
+    const cy = rect.top  + rect.height / 2;
+    const dx = (e.clientX - cx) * 0.35;
+    const dy = (e.clientY - cy) * 0.35;
+    gsap.to(btn, { x:dx, y:dy, duration:0.4, ease:'power2.out' });
+  });
+  btn.addEventListener('mouseleave', () => {
+    gsap.to(btn, { x:0, y:0, duration:0.6, ease:'elastic.out(1,0.4)' });
+  });
+});
+
+/* ══════════════════════════════════════════════
+   3D IMAGE TILT
+   Feature images tilt in 3D perspective
+   as cursor moves over them
+══════════════════════════════════════════════ */
+document.querySelectorAll('.tilt-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width  - 0.5; // -0.5 to 0.5
+    const y = (e.clientY - rect.top)  / rect.height - 0.5;
+    const rotX = -y * 6;  // max 6deg
+    const rotY =  x * 8;  // max 8deg
+    gsap.to(card, {
+      rotateX: rotX,
+      rotateY: rotY,
+      scale: 1.01,
+      duration: 0.4,
+      ease: 'power2.out',
+      transformPerspective: 800,
+    });
+  });
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, {
+      rotateX:0, rotateY:0, scale:1,
+      duration: 0.8,
+      ease: 'elastic.out(1,0.5)',
+    });
+  });
+});
+
+/* ══════════════════════════════════════════════
+   SCROLL-DRIVEN NUMBER COUNTER
+   Numbers count up when they enter view
+══════════════════════════════════════════════ */
+const counterObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseInt(el.dataset.target || '0');
+    const suffix = el.dataset.suffix || '';
+    if(el.dataset.daily) return; // skip "Daily" — no counting
+    let start = 0;
+    const dur = 1800, step = 16;
+    const inc = target / (dur / step);
+    const iv = setInterval(() => {
+      start += inc;
+      if(start >= target){ start = target; clearInterval(iv); }
+      el.textContent = Math.floor(start) + suffix;
+    }, step);
+    counterObs.unobserve(el);
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll('.count-num[data-target]').forEach(el => counterObs.observe(el));
+
+/* ══════════════════════════════════════════════
+   MENU ITEM HOVER LIFT
+   Each menu item subtly lifts on hover
+══════════════════════════════════════════════ */
+document.querySelectorAll('.mc-item').forEach(item => {
+  item.addEventListener('mouseenter', () => {
+    gsap.to(item, { x:6, duration:.25, ease:'power2.out' });
+    gsap.to(item.querySelector('.mci-name'), { color:'var(--terra)', duration:.2 });
+  });
+  item.addEventListener('mouseleave', () => {
+    gsap.to(item, { x:0, duration:.4, ease:'elastic.out(1,0.5)' });
+    gsap.to(item.querySelector('.mci-name'), { color:'var(--charcoal)', duration:.3 });
+  });
+});
+
+/* ══════════════════════════════════════════════
+   CLIP-PATH SECTION WIPE + STAGGER REVEAL
+   Sections wipe in from left like a curtain
+   Feature images sweep with a colour overlay
+══════════════════════════════════════════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.rv, .clip-reveal, .line-wipe, .feature-img, .stagger-parent').forEach(el => revealObs.observe(el));
+
+/* ── BOOT HERO with char split ── */
+const origBoot = window.bootHero;
+window.bootHero = function(){
+  splitAndAnimate();
+  gsap.to('.hero-eyebrow', { opacity:1, y:0, duration:.8, delay:.5, ease:'power3.out' });
+  gsap.to('.hero-right',   { opacity:1, y:0, duration:.8, delay:.8, ease:'power3.out' });
+  gsap.to('.hero-scroll',  { opacity:1, duration:.6, delay:1.2 });
+};
 </script>
 </body>
 </html>
