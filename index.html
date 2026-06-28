@@ -6,7 +6,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
@@ -465,95 +464,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
 .ft-social a{font-family:var(--f-body);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,232,216,.2);text-decoration:none;transition:color .2s;}
 .ft-social a:hover{color:var(--gold);}
 
-/* ── THREE.JS EMBER CANVAS ── */
-#ember-canvas{
-  position:absolute;inset:0;
-  width:100%;height:100%;
-  pointer-events:none;
-  z-index:1; /* above video, below text */
-}
-
-/* ── HORIZONTAL DISH SCROLL ── */
-#dishes{
-  position:relative;
-  background:var(--cream);
-  overflow:hidden;
-}
-.dishes-pin{
-  position:sticky;top:0;
-  height:100vh;
-  overflow:hidden;
-  display:flex;align-items:stretch;
-}
-.dishes-track{
-  display:flex;
-  flex-direction:row;
-  width:300vw; /* 3 panels × 100vw */
-  will-change:transform;
-}
-.dish-panel{
-  width:100vw;
-  height:100vh;
-  flex-shrink:0;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  position:relative;
-}
-/* panel progress bar */
-.dish-progress{
-  position:absolute;bottom:0;left:0;right:0;
-  height:2px;background:var(--linen);z-index:10;
-}
-.dish-progress-fill{
-  height:100%;background:var(--terra);
-  width:0%;transition:width .05s linear;
-}
-/* panel counter */
-.dish-counter{
-  position:absolute;top:36px;right:52px;z-index:10;
-  font-family:var(--f-body);font-size:.65rem;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--stone);
-}
-/* drag hint */
-.dish-hint{
-  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
-  z-index:10;display:flex;align-items:center;gap:10px;
-  font-family:var(--f-body);font-size:.58rem;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--stone);opacity:0;
-  transition:opacity .5s;
-}
-.dish-hint.show{opacity:1;}
-.dish-hint-arrow{font-size:1rem;animation:arrowPulse 1.5s ease-in-out infinite;}
-@keyframes arrowPulse{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
-
-.dish-panel .dish-img{
-  position:relative;overflow:hidden;
-  height:100%;
-}
-.dish-panel .dish-img-inner{
-  position:absolute;inset:-8%;
-  background-size:cover;background-position:center;
-  will-change:transform;
-}
-.dish-panel .dish-info{
-  display:flex;flex-direction:column;justify-content:center;
-  padding:0 72px;height:100%;
-  opacity:0;transform:translateY(24px);
-  transition:opacity .7s ease,transform .7s ease;
-}
-.dish-panel.active .dish-info{opacity:1;transform:none;}
-.dish-panel .dish-info.warm{background:var(--sand);}
-.dish-panel .dish-info.dark{background:var(--charcoal);}
-
-/* responsive — revert to vertical on mobile */
-@media(max-width:900px){
-  .dishes-pin{height:auto;position:relative;}
-  .dishes-track{width:100%;flex-direction:column;}
-  .dish-panel{width:100%;height:auto;min-height:80vh;grid-template-columns:1fr;}
-  .dish-panel .dish-img{min-height:50vh;}
-  .dish-panel .dish-info{padding:48px 24px;opacity:1;transform:none;}
-  .dish-counter,.dish-hint,.dish-progress{display:none;}
-}
+/* ── REVEAL ── */
 .rv{opacity:0;transform:translateY(32px);transition:opacity .85s ease,transform .85s ease;}
 .rv.in{opacity:1;transform:none;}
 .d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}.d4{transition-delay:.4s;}
@@ -584,85 +495,6 @@ footer{background:var(--bark);padding:72px 52px 44px;}
   .ft-top{grid-template-columns:1fr;}
   .res-hours{flex-direction:column;gap:20px;}
 }
-
-/* ── SPLIT CHAR ANIMATION ── */
-.char-wrap{overflow:hidden;display:inline-block;vertical-align:top;}
-.char{display:inline-block;transform:translateY(110%) rotate(4deg);opacity:0;will-change:transform,opacity;}
-
-/* ── CLIP-PATH REVEAL ── */
-.clip-reveal{
-  clip-path:inset(0 100% 0 0);
-  transition:clip-path 1s cubic-bezier(0.16,1,0.3,1);
-}
-.clip-reveal.in{ clip-path:inset(0 0% 0 0); }
-
-/* ── IMAGE 3D TILT ── */
-.tilt-card{
-  transform-style:preserve-3d;
-  transition:transform .1s linear;
-  will-change:transform;
-}
-.tilt-card-inner{
-  transform:translateZ(20px);
-}
-
-/* ── MAGNETIC BUTTON ── */
-.mag-btn{
-  position:relative;
-  transition:transform .4s cubic-bezier(0.23,1,0.32,1);
-  display:inline-flex;align-items:center;
-}
-
-/* ── COUNTER ── */
-.count-num{
-  display:inline-block;
-  transition:transform .8s cubic-bezier(0.16,1,0.3,1);
-}
-
-/* ── HORIZONTAL LINE WIPE ── */
-.line-wipe{
-  display:inline-block;
-  clip-path:inset(0 100% 0 0);
-  transition:clip-path 1.2s cubic-bezier(0.16,1,0.3,1);
-}
-.line-wipe.in{ clip-path:inset(0 0% 0 0); }
-
-/* ── STAGGER REVEAL ── */
-.stagger-parent .stagger-child{
-  opacity:0;
-  transform:translateY(28px);
-  transition:opacity .7s ease,transform .7s ease;
-}
-.stagger-parent.in .stagger-child:nth-child(1){opacity:1;transform:none;transition-delay:.05s;}
-.stagger-parent.in .stagger-child:nth-child(2){opacity:1;transform:none;transition-delay:.15s;}
-.stagger-parent.in .stagger-child:nth-child(3){opacity:1;transform:none;transition-delay:.25s;}
-.stagger-parent.in .stagger-child:nth-child(4){opacity:1;transform:none;transition-delay:.35s;}
-
-/* ── FEATURE IMG OVERLAY SWEEP ── */
-.feature-img::after{
-  content:'';
-  position:absolute;inset:0;
-  background:var(--sand);
-  transform:scaleX(1);
-  transform-origin:left;
-  transition:transform 1s cubic-bezier(0.16,1,0.3,1);
-  z-index:3;
-}
-.feature-img.in::after{ transform:scaleX(0);transform-origin:right; }
-
-/* ── DISH PANEL text wipe ── */
-.dish-info .dish-tag,
-.dish-info .dish-name,
-.dish-info .dish-desc,
-.dish-info .dish-detail{
-  opacity:0;
-  transform:translateY(20px);
-  transition:opacity .6s ease, transform .6s ease;
-}
-.dish-panel.active .dish-info .dish-tag  { opacity:1;transform:none;transition-delay:.0s; }
-.dish-panel.active .dish-info .dish-name { opacity:1;transform:none;transition-delay:.1s; }
-.dish-panel.active .dish-info .dish-desc { opacity:1;transform:none;transition-delay:.2s; }
-.dish-panel.active .dish-info .dish-detail{ opacity:1;transform:none;transition-delay:.3s; }
 </style>
 </head>
 <body>
@@ -684,23 +516,16 @@ footer{background:var(--bark);padding:72px 52px 44px;}
     <li><a href="ember-about.html">About</a></li>
     <li><a href="ember-reservations.html">Location</a></li>
   </ul>
-  <a href="ember-reservations.html" class="nav-reserve mag-btn">Reserve a Table</a>
+  <a href="ember-reservations.html" class="nav-reserve">Reserve a Table</a>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
   <div class="hero-bg">
-    <!-- Hero video: luxury coastal sunset — Mixkit CDN (freely embeddable) -->
-    <video
-      autoplay muted loop playsinline
-      style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.6;pointer-events:none;"
-      poster="https://images.pexels.com/photos/1024960/pexels-photo-1024960.jpeg?auto=compress&cs=tinysrgb&w=1920">
-      <source src="https://assets.mixkit.co/videos/4871/4871-720.mp4" type="video/mp4"/>
-      <source src="https://assets.mixkit.co/videos/3673/3673-720.mp4" type="video/mp4"/>
-      <source src="https://assets.mixkit.co/videos/4145/4145-720.mp4" type="video/mp4"/>
+    <video autoplay muted loop playsinline id="heroVideo" poster="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1920" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.65;">
+      <source src="https://videos.pexels.com/video-files/10432087/10432087-uhd_3840_2160_30fps.mp4" type="video/mp4"/>
     </video>
-    <!-- Three.js ember particle canvas — sits ABOVE video -->
-    <canvas id="ember-canvas"></canvas>
+    <div class="ember-field" id="emberField"></div>
     <div class="hero-texture"></div>
     <div class="hero-line"></div>
   </div>
@@ -714,7 +539,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
     </div>
     <div class="hero-right">
       <p class="hero-sub">A coastal table shaped by fire, salt, and the generosity of the Mediterranean shore.</p>
-      <a href="ember-reservations.html" class="btn-reserve mag-btn">Reserve a Table</a>
+      <a href="ember-reservations.html" class="btn-reserve">Reserve a Table</a>
     </div>
   </div>
   <div class="hero-scroll">
@@ -761,7 +586,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
 </section>
 
 <!-- FEATURE IMAGE 1 -->
-<div class="feature-img rv tilt-card">
+<div class="feature-img rv">
   <div class="feature-img-inner fi-1" id="parallax1" style="background-image:url('https://images.pexels.com/photos/2233729/pexels-photo-2233729.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
   <div class="feature-img-overlay"></div>
   <div class="feature-img-caption">
@@ -781,8 +606,8 @@ footer{background:var(--bark);padding:72px 52px 44px;}
       </div>
       <div class="sh-right rv d1"><a href="ember-menu.html">Full menu</a></div>
     </div>
-    <div class="menu-categories stagger-parent rv">
-      <div class="menu-cat stagger-child">
+    <div class="menu-categories">
+      <div class="menu-cat rv d1">
         <div class="mc-title">From the Sea</div>
         <div class="mc-items">
           <div class="mc-item">
@@ -803,7 +628,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
           </div>
         </div>
       </div>
-      <div class="menu-cat stagger-child">
+      <div class="menu-cat rv d2">
         <div class="mc-title">From the Land</div>
         <div class="mc-items">
           <div class="mc-item">
@@ -824,7 +649,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
           </div>
         </div>
       </div>
-      <div class="menu-cat stagger-child">
+      <div class="menu-cat rv d3">
         <div class="mc-title">To Finish</div>
         <div class="mc-items">
           <div class="mc-item">
@@ -867,70 +692,60 @@ footer{background:var(--bark);padding:72px 52px 44px;}
   </div>
 </section>
 
-<!-- DISHES SHOWCASE — HORIZONTAL SCROLL (400vh scroll space, 3 pinned panels) -->
-<div id="dishes" style="height:400vh;">
-  <div class="dishes-pin">
-    <div class="dishes-track" id="dishesTrack">
-
-      <!-- Panel 1 -->
-      <div class="dish-panel active" id="dp-1">
-        <div class="dish-img">
-          <div class="dish-img-inner di-1" id="dp1" style="background-image:url('https://images.pexels.com/photos/3659862/pexels-photo-3659862.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
-        </div>
-        <div class="dish-info">
-          <div class="dish-tag">Signature · 01</div>
-          <h3 class="dish-name">Grilled<br/><em>Langoustines</em></h3>
-          <p class="dish-desc">Live langoustines from the coast, split and grilled over olive wood until the shells caramelise and the flesh turns sweet. Finished with cold-pressed lemon oil and sea herbs gathered at low tide.</p>
-          <div class="dish-detail">
-            <span>Wood-fired</span><div class="dish-detail-sep"></div>
-            <span>Sustainable catch</span><div class="dish-detail-sep"></div>
-            <span>Daily availability</span>
-          </div>
-        </div>
-        <div class="dish-counter">01 / 03</div>
-      </div>
-
-      <!-- Panel 2 -->
-      <div class="dish-panel" id="dp-2">
-        <div class="dish-img">
-          <div class="dish-img-inner di-2" id="dp2" style="background-image:url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
-        </div>
-        <div class="dish-info warm">
-          <div class="dish-tag">From the Garden · 02</div>
-          <h3 class="dish-name">Burrata<br/><em>& Heritage Tomato</em></h3>
-          <p class="dish-desc">Pulled fresh each morning, set against heritage tomatoes slow-dried in the afternoon sun. A drizzle of fifteen-year aged balsamic, fleur de sel, and basil oil pressed to order.</p>
-          <div class="dish-detail">
-            <span>Local produce</span><div class="dish-detail-sep"></div>
-            <span>Seasonal</span><div class="dish-detail-sep"></div>
-            <span>Vegetarian</span>
-          </div>
-        </div>
-        <div class="dish-counter">02 / 03</div>
-      </div>
-
-      <!-- Panel 3 -->
-      <div class="dish-panel" id="dp-3">
-        <div class="dish-img">
-          <div class="dish-img-inner di-3" id="dp3" style="background-image:url('https://images.pexels.com/photos/8969237/pexels-photo-8969237.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
-        </div>
-        <div class="dish-info dark">
-          <div class="dish-tag" style="color:var(--gold)">Chef's Selection · 03</div>
-          <h3 class="dish-name" style="color:var(--sand)">Slow-roasted<br/><em>Lamb Shoulder</em></h3>
-          <p class="dish-desc" style="color:rgba(240,232,216,.45)">Eight hours over olive wood. The shoulder falls apart at a breath. Served with harissa made in-house and a jus that has been reducing since morning.</p>
-          <div class="dish-detail" style="color:rgba(240,232,216,.35)">
-            <span>8-hour cook</span><div class="dish-detail-sep" style="background:rgba(240,232,216,.1)"></div>
-            <span>Olive wood fire</span><div class="dish-detail-sep" style="background:rgba(240,232,216,.1)"></div>
-            <span>Serves two</span>
-          </div>
-        </div>
-        <div class="dish-counter">03 / 03</div>
-      </div>
-
+<!-- DISHES SHOWCASE -->
+<section id="dishes">
+  <div class="dish-row rv">
+    <div class="dish-img">
+      <div class="dish-img-inner di-1" id="dp1" style="background-image:url('https://images.pexels.com/photos/3659862/pexels-photo-3659862.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
     </div>
-    <div class="dish-progress"><div class="dish-progress-fill" id="dishProg"></div></div>
-    <div class="dish-hint show" id="dishHint"><span>Scroll to explore</span><span class="dish-hint-arrow">→</span></div>
+    <div class="dish-info">
+      <div class="dish-tag">Signature</div>
+      <h3 class="dish-name">Grilled<br/><em>Langoustines</em></h3>
+      <p class="dish-desc">Live langoustines from the coast, split and grilled over olive wood until the shells caramelise and the flesh turns sweet. Finished with cold-pressed lemon oil and sea herbs gathered at low tide.</p>
+      <div class="dish-detail">
+        <span>Wood-fired</span>
+        <div class="dish-detail-sep"></div>
+        <span>Sustainable catch</span>
+        <div class="dish-detail-sep"></div>
+        <span>Daily availability</span>
+      </div>
+    </div>
   </div>
-</div>
+  <div class="dish-row rv">
+    <div class="dish-img">
+      <div class="dish-img-inner di-2" id="dp2" style="background-image:url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
+    </div>
+    <div class="dish-info warm">
+      <div class="dish-tag">From the Garden</div>
+      <h3 class="dish-name">Burrata<br/><em>& Heritage Tomato</em></h3>
+      <p class="dish-desc">Pulled fresh each morning, set against heritage tomatoes that have been slow-dried in the afternoon sun. A drizzle of fifteen-year aged balsamic, fleur de sel, and basil oil pressed to order.</p>
+      <div class="dish-detail">
+        <span>Local produce</span>
+        <div class="dish-detail-sep"></div>
+        <span>Seasonal</span>
+        <div class="dish-detail-sep"></div>
+        <span>Vegetarian</span>
+      </div>
+    </div>
+  </div>
+  <div class="dish-row rv">
+    <div class="dish-img">
+      <div class="dish-img-inner di-3" id="dp3" style="background-image:url('https://images.pexels.com/photos/8969237/pexels-photo-8969237.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
+    </div>
+    <div class="dish-info dark">
+      <div class="dish-tag">Chef's Selection</div>
+      <h3 class="dish-name" style="color:var(--sand)">Slow-roasted<br/><em>Lamb Shoulder</em></h3>
+      <p class="dish-desc" style="color:rgba(240,232,216,.42)">Eight hours over olive wood. The shoulder falls apart at a breath. Served with harissa we make in-house from dried Calabrian peppers and a jus that has been reducing since morning.</p>
+      <div class="dish-detail" style="color:rgba(240,232,216,.3)">
+        <span>8-hour cook</span>
+        <div class="dish-detail-sep" style="background:rgba(240,232,216,.1)"></div>
+        <span>Olive wood fire</span>
+        <div class="dish-detail-sep" style="background:rgba(240,232,216,.1)"></div>
+        <span>Serves two</span>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- EXPERIENCE NUMBERS -->
 <section id="experience">
@@ -943,17 +758,17 @@ footer{background:var(--bark);padding:72px 52px 44px;}
     </div>
     <div class="exp-grid">
       <div class="exp-cell rv d1">
-        <div class="exp-num"><span class="count-num" data-target="48" data-suffix="">0</span></div>
+        <div class="exp-num">48</div>
         <div class="exp-label">Seats</div>
         <div class="exp-desc">Intimate by design. Every table has a view of the kitchen hearth.</div>
       </div>
       <div class="exp-cell rv d2">
-        <div class="exp-num"><span class="count-num" data-target="1" data-suffix="">0</span></div>
+        <div class="exp-num">1</div>
         <div class="exp-label">Fire</div>
         <div class="exp-desc">One wood-fired hearth. Every dish passes through its heat.</div>
       </div>
       <div class="exp-cell rv d3">
-        <div class="exp-num"><span class="count-num" data-daily="true">Daily</span></div>
+        <div class="exp-num">Daily</div>
         <div class="exp-label">Menu</div>
         <div class="exp-desc">We write the menu each morning. Yesterday's is already gone.</div>
       </div>
@@ -962,7 +777,7 @@ footer{background:var(--bark);padding:72px 52px 44px;}
 </section>
 
 <!-- FEATURE IMAGE 2 -->
-<div class="feature-img rv tilt-card">
+<div class="feature-img rv">
   <div class="feature-img-inner fi-2" id="parallax2" style="background-image:url('https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1920');background-size:cover;background-position:center;"></div>
   <div class="feature-img-overlay" style="background:linear-gradient(to left,rgba(28,25,22,.7) 0%,rgba(28,25,22,.2) 50%,transparent 100%)"></div>
   <div class="feature-img-caption" style="left:auto;right:52px;text-align:right;">
@@ -1084,9 +899,10 @@ const liv=setInterval(()=>{
   ldFill.style.width=lp+'%';
 },60);
 
-/* ── HERO ANIMATION ── (overridden by bootHero below after char split) */
+/* ── HERO ANIMATION ── */
 function bootHero(){
-  /* will be overridden after splitAndAnimate is defined */
+  const lines=document.querySelectorAll('.line-inner');
+  gsap.to(lines,{y:0,duration:1.2,stagger:.18,ease:'power4.out',delay:.1});
   gsap.to('.hero-eyebrow',{opacity:1,y:0,duration:.8,delay:.5,ease:'power3.out'});
   gsap.to('.hero-right',{opacity:1,y:0,duration:.8,delay:.8,ease:'power3.out'});
   gsap.to('.hero-scroll',{opacity:1,duration:.6,delay:1.2});
@@ -1144,273 +960,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
     if(target){ e.preventDefault(); lenis.scrollTo(target,{offset:-72,duration:1.6}); }
   });
 });
-
-/* ══════════════════════════════════════════════
-   THREE.JS EMBER PARTICLE SYSTEM
-   Warm amber/terracotta particles rise like
-   embers from a fire — mouse reactive
-══════════════════════════════════════════════ */
-(function(){
-  const canvas = document.getElementById('ember-canvas');
-  if(!canvas) return;
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-  const scene = new THREE.Scene();
-  const cam   = new THREE.PerspectiveCamera(60, 2, 0.1, 100);
-  cam.position.z = 5;
-  function resize(){
-    const w=canvas.clientWidth, h=canvas.clientHeight;
-    renderer.setSize(w,h,false);
-    cam.aspect=w/h; cam.updateProjectionMatrix();
-  }
-  resize(); window.addEventListener('resize',resize);
-
-  const COUNT = 1800;
-  const positions = new Float32Array(COUNT*3);
-  const sizes     = new Float32Array(COUNT);
-  for(let i=0;i<COUNT;i++){
-    positions[i*3]   = (Math.random()-0.5)*14;
-    positions[i*3+1] = (Math.random()-0.5)*8;
-    positions[i*3+2] = (Math.random()-0.5)*4;
-    sizes[i] = Math.random()*4+1;
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(positions,3));
-  geo.setAttribute('size',     new THREE.BufferAttribute(sizes,1));
-
-  const mat = new THREE.ShaderMaterial({
-    uniforms:{ uTime:{value:0}, uMouse:{value:new THREE.Vector2(0,0)} },
-    vertexShader:`
-      attribute float size;
-      uniform float uTime;
-      uniform vec2 uMouse;
-      varying float vAlpha;
-      void main(){
-        vec3 pos = position;
-        float speed = 0.004 + fract(sin(float(gl_VertexID)*127.1)*43758.5)*0.006;
-        pos.y = mod(pos.y + uTime*speed*60.0+4.0,8.0)-4.0;
-        float sway = sin(uTime*0.8+fract(sin(float(gl_VertexID)*91.3)*23421.6)*6.28)*0.12;
-        pos.x += sway;
-        pos.x += uMouse.x*(1.0-(pos.z+2.0)/6.0)*0.3;
-        pos.y += uMouse.y*(1.0-(pos.z+2.0)/6.0)*0.2;
-        float flicker = 0.5+0.5*sin(uTime*3.0+float(gl_VertexID)*0.7);
-        vAlpha = flicker*0.55;
-        vec4 mvPos = modelViewMatrix*vec4(pos,1.0);
-        gl_PointSize = size*(200.0/-mvPos.z);
-        gl_Position = projectionMatrix*mvPos;
-      }
-    `,
-    fragmentShader:`
-      varying float vAlpha;
-      void main(){
-        vec2 uv = gl_PointCoord-vec2(0.5);
-        float d = length(uv);
-        if(d>0.5) discard;
-        float alpha = smoothstep(0.5,0.1,d)*vAlpha;
-        vec3 col = mix(vec3(0.95,0.45,0.12),vec3(0.85,0.25,0.05),d*2.0);
-        gl_FragColor = vec4(col,alpha);
-      }
-    `,
-    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending,
-  });
-
-  scene.add(new THREE.Points(geo,mat));
-  let mx=0,my=0,tmx=0,tmy=0;
-  document.addEventListener('mousemove',e=>{
-    mx=(e.clientX/innerWidth-0.5)*2;
-    my=(e.clientY/innerHeight-0.5)*2;
-  });
-  let t=0;
-  (function animate(){
-    requestAnimationFrame(animate); t+=0.016;
-    tmx+=(mx-tmx)*0.05; tmy+=(my-tmy)*0.05;
-    mat.uniforms.uTime.value=t;
-    mat.uniforms.uMouse.value.set(tmx,-tmy);
-    renderer.render(scene,cam);
-  })();
-})();
-
-/* ══════════════════════════════════════════════
-   HORIZONTAL DISH SCROLL
-   GSAP ScrollTrigger pins and drives
-   smooth horizontal pan through 3 dish panels
-══════════════════════════════════════════════ */
-(function(){
-  const track  = document.getElementById('dishesTrack');
-  const progBar= document.getElementById('dishProg');
-  const hint   = document.getElementById('dishHint');
-  const panels = document.querySelectorAll('.dish-panel');
-  if(!track || window.innerWidth<900) return;
-
-  gsap.to(track,{
-    x:()=>'-200vw',
-    ease:'none',
-    scrollTrigger:{
-      trigger:'#dishes',
-      start:'top top',
-      end:'bottom bottom',
-      scrub:1.2,
-      pin:'.dishes-pin',
-      anticipatePin:1,
-      onUpdate:(self)=>{
-        if(progBar) progBar.style.width=(self.progress*100)+'%';
-        if(self.progress>0.05 && hint) hint.classList.remove('show');
-        const idx = Math.round(self.progress*2);
-        panels.forEach((p,i)=>p.classList.toggle('active',i===idx));
-        panels.forEach((p,i)=>{
-          const img=p.querySelector('.dish-img-inner');
-          if(img) img.style.transform=`translateX(${(self.progress*2-i)*10}%) scale(1.08)`;
-        });
-      }
-    }
-  });
-})();
-
-/* ══════════════════════════════════════════════
-   SPLIT CHARACTER HERO ANIMATION
-   Each letter of the headline animates in
-   individually with a spring stagger
-══════════════════════════════════════════════ */
-function splitAndAnimate(){
-  const lines = document.querySelectorAll('.hero-h1 .line-inner');
-  lines.forEach((line, li) => {
-    const text = line.innerHTML;
-    // Wrap each char (preserve <em> tags)
-    const wrapped = text.replace(/(<em>.*?<\/em>|.)/gs, (match) => {
-      if(match.startsWith('<em>')) return match; // keep em tags intact
-      if(match === ' ') return '<span class="char-wrap"> </span>';
-      return `<span class="char-wrap"><span class="char">${match}</span></span>`;
-    });
-    line.innerHTML = wrapped;
-
-    // Animate each char with GSAP
-    const chars = line.querySelectorAll('.char');
-    gsap.to(chars, {
-      y: 0,
-      opacity: 1,
-      rotate: 0,
-      duration: 0.9,
-      stagger: 0.028,
-      ease: 'power4.out',
-      delay: 0.3 + li * 0.18,
-    });
-  });
-
-  // Also animate the em italic word inside
-  const emChars = document.querySelectorAll('.hero-h1 em');
-  emChars.forEach(em => {
-    gsap.fromTo(em, { opacity:0, y:20 }, { opacity:1, y:0, duration:.8, delay:0.9, ease:'power3.out' });
-  });
-}
-
-/* ══════════════════════════════════════════════
-   MAGNETIC CURSOR EFFECT
-   Buttons attract the cursor when hovering nearby
-══════════════════════════════════════════════ */
-document.querySelectorAll('.mag-btn').forEach(btn => {
-  btn.addEventListener('mousemove', e => {
-    const rect = btn.getBoundingClientRect();
-    const cx = rect.left + rect.width  / 2;
-    const cy = rect.top  + rect.height / 2;
-    const dx = (e.clientX - cx) * 0.35;
-    const dy = (e.clientY - cy) * 0.35;
-    gsap.to(btn, { x:dx, y:dy, duration:0.4, ease:'power2.out' });
-  });
-  btn.addEventListener('mouseleave', () => {
-    gsap.to(btn, { x:0, y:0, duration:0.6, ease:'elastic.out(1,0.4)' });
-  });
-});
-
-/* ══════════════════════════════════════════════
-   3D IMAGE TILT
-   Feature images tilt in 3D perspective
-   as cursor moves over them
-══════════════════════════════════════════════ */
-document.querySelectorAll('.tilt-card').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width  - 0.5; // -0.5 to 0.5
-    const y = (e.clientY - rect.top)  / rect.height - 0.5;
-    const rotX = -y * 6;  // max 6deg
-    const rotY =  x * 8;  // max 8deg
-    gsap.to(card, {
-      rotateX: rotX,
-      rotateY: rotY,
-      scale: 1.01,
-      duration: 0.4,
-      ease: 'power2.out',
-      transformPerspective: 800,
-    });
-  });
-  card.addEventListener('mouseleave', () => {
-    gsap.to(card, {
-      rotateX:0, rotateY:0, scale:1,
-      duration: 0.8,
-      ease: 'elastic.out(1,0.5)',
-    });
-  });
-});
-
-/* ══════════════════════════════════════════════
-   SCROLL-DRIVEN NUMBER COUNTER
-   Numbers count up when they enter view
-══════════════════════════════════════════════ */
-const counterObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(!e.isIntersecting) return;
-    const el = e.target;
-    const target = parseInt(el.dataset.target || '0');
-    const suffix = el.dataset.suffix || '';
-    if(el.dataset.daily) return; // skip "Daily" — no counting
-    let start = 0;
-    const dur = 1800, step = 16;
-    const inc = target / (dur / step);
-    const iv = setInterval(() => {
-      start += inc;
-      if(start >= target){ start = target; clearInterval(iv); }
-      el.textContent = Math.floor(start) + suffix;
-    }, step);
-    counterObs.unobserve(el);
-  });
-}, { threshold: 0.6 });
-document.querySelectorAll('.count-num[data-target]').forEach(el => counterObs.observe(el));
-
-/* ══════════════════════════════════════════════
-   MENU ITEM HOVER LIFT
-   Each menu item subtly lifts on hover
-══════════════════════════════════════════════ */
-document.querySelectorAll('.mc-item').forEach(item => {
-  item.addEventListener('mouseenter', () => {
-    gsap.to(item, { x:6, duration:.25, ease:'power2.out' });
-    gsap.to(item.querySelector('.mci-name'), { color:'var(--terra)', duration:.2 });
-  });
-  item.addEventListener('mouseleave', () => {
-    gsap.to(item, { x:0, duration:.4, ease:'elastic.out(1,0.5)' });
-    gsap.to(item.querySelector('.mci-name'), { color:'var(--charcoal)', duration:.3 });
-  });
-});
-
-/* ══════════════════════════════════════════════
-   CLIP-PATH SECTION WIPE + STAGGER REVEAL
-   Sections wipe in from left like a curtain
-   Feature images sweep with a colour overlay
-══════════════════════════════════════════════ */
-const revealObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting) e.target.classList.add('in');
-  });
-}, { threshold: 0.08 });
-document.querySelectorAll('.rv, .clip-reveal, .line-wipe, .feature-img, .stagger-parent').forEach(el => revealObs.observe(el));
-
-/* ── BOOT HERO with char split ── */
-const origBoot = window.bootHero;
-window.bootHero = function(){
-  splitAndAnimate();
-  gsap.to('.hero-eyebrow', { opacity:1, y:0, duration:.8, delay:.5, ease:'power3.out' });
-  gsap.to('.hero-right',   { opacity:1, y:0, duration:.8, delay:.8, ease:'power3.out' });
-  gsap.to('.hero-scroll',  { opacity:1, duration:.6, delay:1.2 });
-};
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
 </script>
 </body>
 </html>
