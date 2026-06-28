@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Reservations — Ember & Salt</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+:root{--sand:#F0E8D8;--cream:#FAF6EF;--charcoal:#1C1916;--bark:#2E2420;--terra:#C4622D;--olive:#4A5240;--gold:#B8975A;--stone:#8A7E72;--linen:#E8DDD0;--f-display:'Cormorant Garamond',serif;--f-body:'Jost',sans-serif;--f-menu:'EB Garamond',serif;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html{font-size:16px;}
+body{background:var(--cream);color:var(--charcoal);font-family:var(--f-body);overflow-x:hidden;cursor:none;}
+#cur{position:fixed;width:8px;height:8px;background:var(--terra);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;}
+#curR{position:fixed;width:32px;height:32px;border:1px solid rgba(196,98,45,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+#loader{position:fixed;inset:0;background:var(--charcoal);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
+.ld-name{font-family:var(--f-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:300;color:var(--sand);letter-spacing:.12em;text-transform:uppercase;overflow:hidden;}
+.ld-name-inner{display:block;transform:translateY(110%);}
+.ld-amp{color:var(--terra);font-style:italic;}
+.ld-line{width:120px;height:1px;background:rgba(240,232,216,.12);}
+.ld-fill{height:1px;background:var(--gold);width:0%;}
+.ld-sub{font-family:var(--f-body);font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(240,232,216,.28);}
+#nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0 52px;height:72px;display:flex;align-items:center;justify-content:space-between;background:rgba(250,246,239,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(28,25,22,.08);}
+.nav-logo{font-family:var(--f-display);font-size:1.25rem;font-weight:400;color:var(--charcoal);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;}
+.nav-logo span{font-style:italic;color:var(--gold);}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
+.nav-links a{font-family:var(--f-body);font-size:.72rem;font-weight:400;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:rgba(28,25,22,.5);transition:color .3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--terra)!important;}
+.nav-reserve{font-family:var(--f-body);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:10px 24px;border:1px solid rgba(28,25,22,.2);color:var(--charcoal);transition:all .35s;}
+.nav-reserve:hover{background:var(--terra);border-color:var(--terra);color:var(--cream);}
+/* MAIN LAYOUT */
+.res-page{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;}
+/* LEFT — form side */
+.res-left{padding:140px 64px 80px;background:var(--cream);display:flex;flex-direction:column;justify-content:flex-start;}
+.res-tag{font-family:var(--f-body);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.res-tag::before{content:'';width:20px;height:1px;background:var(--stone);}
+.res-h1{font-family:var(--f-display);font-weight:300;font-size:clamp(2.2rem,4vw,4rem);letter-spacing:.02em;color:var(--charcoal);line-height:1.08;margin-bottom:12px;}
+.res-h1 em{font-style:italic;color:var(--terra);}
+.res-sub{font-family:var(--f-menu);font-style:italic;font-size:1rem;color:var(--stone);line-height:1.7;margin-bottom:52px;max-width:420px;}
+/* FORM */
+.res-form{display:flex;flex-direction:column;gap:0;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.form-label{font-family:var(--f-body);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--stone);}
+.form-input,.form-select,.form-textarea{
+  font-family:var(--f-menu);font-size:1rem;color:var(--charcoal);
+  background:transparent;border:none;border-bottom:1px solid var(--linen);
+  padding:10px 0;outline:none;width:100%;
+  transition:border-color .3s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--terra);}
+.form-input::placeholder,.form-textarea::placeholder{color:rgba(28,25,22,.25);}
+.form-select{appearance:none;cursor:pointer;}
+.form-textarea{resize:none;height:80px;line-height:1.6;}
+.form-note{font-family:var(--f-menu);font-style:italic;font-size:.85rem;color:var(--stone);margin-bottom:32px;line-height:1.6;}
+.btn-submit{
+  font-family:var(--f-body);font-size:.7rem;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;
+  background:var(--terra);color:var(--cream);
+  padding:18px 40px;border:none;cursor:pointer;
+  transition:background .3s,transform .3s;align-self:flex-start;
+}
+.btn-submit:hover{background:#A8521F;transform:translateY(-2px);}
+/* Divider */
+.form-divider{display:flex;align-items:center;gap:16px;margin:32px 0;}
+.fd-line{flex:1;height:1px;background:var(--linen);}
+.fd-text{font-family:var(--f-menu);font-style:italic;font-size:.85rem;color:var(--stone);}
+.btn-opentable{
+  font-family:var(--f-body);font-size:.7rem;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;
+  background:transparent;color:var(--charcoal);
+  padding:17px 40px;border:1px solid rgba(28,25,22,.2);
+  text-decoration:none;display:inline-block;text-align:center;
+  transition:all .3s;
+}
+.btn-opentable:hover{border-color:var(--charcoal);background:var(--charcoal);color:var(--cream);}
+/* RIGHT — info side */
+.res-right{background:var(--charcoal);padding:140px 64px 80px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;}
+.res-right::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(196,98,45,.07),transparent 60%);}
+.rr-content{position:relative;z-index:1;}
+.rr-h2{font-family:var(--f-display);font-weight:300;font-style:italic;font-size:clamp(1.8rem,3vw,3rem);color:var(--sand);line-height:1.2;margin-bottom:52px;}
+.rr-h2 em{font-style:normal;color:var(--terra);}
+.info-block{margin-bottom:40px;}
+.ib-label{font-family:var(--f-body);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,232,216,.25);margin-bottom:12px;}
+.ib-val{font-family:var(--f-menu);font-size:1rem;color:rgba(240,232,216,.6);line-height:1.7;}
+.ib-val strong{color:var(--sand);font-weight:400;}
+.info-divider{height:1px;background:rgba(240,232,216,.07);margin-bottom:40px;}
+.rr-quote{font-family:var(--f-display);font-style:italic;font-size:1.4rem;font-weight:300;color:rgba(240,232,216,.25);line-height:1.4;max-width:360px;}
+/* PRIVATE */
+.private-section{padding:100px 52px;background:var(--sand);}
+.pv-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.pv-tag{font-family:var(--f-body);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.pv-tag::before{content:'';width:20px;height:1px;background:var(--stone);}
+.pv-h2{font-family:var(--f-display);font-weight:300;font-size:clamp(2rem,4vw,3.8rem);letter-spacing:.02em;color:var(--charcoal);line-height:1.1;margin-bottom:20px;}
+.pv-h2 em{font-style:italic;color:var(--terra);}
+.pv-p{font-family:var(--f-menu);font-size:1.02rem;line-height:1.85;color:var(--stone);margin-bottom:32px;}
+.pv-details{display:flex;flex-direction:column;gap:14px;}
+.pvd{display:flex;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid var(--linen);}
+.pvd:last-child{border-bottom:none;padding-bottom:0;}
+.pvd-l{font-family:var(--f-body);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--stone);}
+.pvd-v{font-family:var(--f-menu);font-size:.95rem;color:var(--charcoal);}
+.btn-enquire{font-family:var(--f-body);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border:1px solid rgba(28,25,22,.2);color:var(--charcoal);padding:13px 28px;display:inline-block;transition:all .3s;margin-top:28px;}
+.btn-enquire:hover{background:var(--charcoal);color:var(--cream);}
+/* MAP PLACEHOLDER */
+.map-section{height:440px;background:var(--charcoal);position:relative;overflow:hidden;}
+.map-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,#2A2018 0%,#1C1510 50%,#0E0C08 100%);display:flex;align-items:center;justify-content:center;}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(184,151,90,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(184,151,90,.04) 1px,transparent 1px);background-size:60px 60px;}
+.map-pin{text-align:center;}
+.map-pin-dot{width:14px;height:14px;background:var(--terra);border-radius:50%;margin:0 auto 12px;box-shadow:0 0 0 6px rgba(196,98,45,.15),0 0 0 14px rgba(196,98,45,.07);}
+.map-pin-label{font-family:var(--f-body);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,232,216,.4);}
+.map-address{position:absolute;bottom:32px;left:52px;}
+.ma-label{font-family:var(--f-body);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(240,232,216,.22);margin-bottom:8px;}
+.ma-val{font-family:var(--f-menu);font-size:1rem;color:rgba(240,232,216,.45);}
+footer{background:var(--bark);padding:72px 52px 44px;}
+.ft-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:60px;padding-bottom:52px;border-bottom:1px solid rgba(240,232,216,.06);margin-bottom:36px;}
+.ft-brand .ft-logo{font-family:var(--f-display);font-size:1.3rem;font-weight:300;color:var(--sand);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;display:inline-block;margin-bottom:16px;}
+.ft-brand .ft-logo span{font-style:italic;color:var(--gold);}
+.ft-brand p{font-family:var(--f-menu);font-style:italic;font-size:.9rem;color:rgba(240,232,216,.28);line-height:1.7;max-width:260px;}
+.ft-col h4{font-family:var(--f-body);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,232,216,.25);margin-bottom:20px;}
+.ft-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.ft-col ul li a{font-family:var(--f-menu);font-size:.95rem;color:rgba(240,232,216,.38);text-decoration:none;transition:color .2s;}
+.ft-col ul li a:hover{color:var(--sand);}
+.ft-bottom{display:flex;justify-content:space-between;align-items:center;}
+.ft-bottom p{font-family:var(--f-body);font-size:.58rem;color:rgba(240,232,216,.16);}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .85s ease,transform .85s ease;}
+.rv.in{opacity:1;transform:none;}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+@media(max-width:900px){
+  #nav{padding:0 20px;}.nav-links{display:none;}
+  .res-page{grid-template-columns:1fr;}
+  .res-right{position:static;height:auto;padding:64px 20px;}
+  .res-left{padding:120px 20px 60px;}
+  .private-section,footer{padding-left:20px;padding-right:20px;}
+  .pv-inner{grid-template-columns:1fr;}
+  .ft-top{grid-template-columns:1fr 1fr;gap:36px;}
+  .map-address{left:20px;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="curR"></div>
+<div id="loader"><div class="ld-name"><span class="ld-name-inner">Ember <span class="ld-amp">&</span> Salt</span></div><div class="ld-line"><div class="ld-fill" id="ldFill"></div></div><div class="ld-sub">Reserve a Table</div></div>
+<nav id="nav">
+  <a href="ember-index.html" class="nav-logo">Ember <span>&</span> Salt</a>
+  <ul class="nav-links">
+    <li><a href="ember-index.html#intro">Our Story</a></li>
+    <li><a href="ember-menu.html">Menu</a></li>
+    <li><a href="ember-about.html">About</a></li>
+    <li><a href="ember-reservations.html" class="active">Location</a></li>
+  </ul>
+  <a href="ember-reservations.html" class="nav-reserve">Reserve a Table</a>
+</nav>
+
+<div class="res-page">
+  <!-- LEFT — FORM -->
+  <div class="res-left">
+    <div class="res-tag rv">Reserve</div>
+    <h1 class="res-h1 rv d1">Join us at<br/>the <em>table.</em></h1>
+    <p class="res-sub rv d2">We hold a small number of tables each evening. Reservations are warmly recommended. For parties of six or more, please call us directly.</p>
+
+    <form class="res-form rv d3" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" placeholder="Marco" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" placeholder="Solano" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="marco@example.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input class="form-input" type="tel" placeholder="+1 (624) 000 0000"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input class="form-input" type="date" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <select class="form-select form-input">
+            <option value="">Select a time</option>
+            <option>6:00 pm</option>
+            <option>6:30 pm</option>
+            <option>7:00 pm</option>
+            <option>7:30 pm</option>
+            <option>8:00 pm</option>
+            <option>8:30 pm</option>
+            <option>9:00 pm</option>
+            <option>9:30 pm</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Number of Guests</label>
+        <select class="form-select form-input">
+          <option>1 guest</option>
+          <option>2 guests</option>
+          <option>3 guests</option>
+          <option>4 guests</option>
+          <option>5 guests</option>
+          <option>6+ guests (call us)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Special Requests</label>
+        <textarea class="form-textarea" placeholder="Dietary requirements, allergies, anniversaries, special occasions..."></textarea>
+      </div>
+      <p class="form-note">For the tasting menu, please note this in special requests. A credit card is required to hold your reservation — no charge will be made unless there is a no-show within 24 hours.</p>
+      <button class="btn-submit" type="submit">Confirm Reservation</button>
+    </form>
+
+    <div class="form-divider rv">
+      <div class="fd-line"></div>
+      <div class="fd-text">or book through</div>
+      <div class="fd-line"></div>
+    </div>
+    <a href="#" class="btn-opentable rv">OpenTable →</a>
+  </div>
+
+  <!-- RIGHT — INFO -->
+  <div class="res-right">
+    <div class="rr-content">
+      <h2 class="rr-h2">Every evening begins <em>here.</em></h2>
+      <div class="info-block">
+        <div class="ib-label">Opening Hours</div>
+        <div class="ib-val">
+          <strong>Tuesday — Friday</strong><br/>
+          6:00 pm — 11:00 pm<br/><br/>
+          <strong>Saturday & Sunday</strong><br/>
+          12:00 pm — 4:00 pm (Lunch)<br/>
+          6:00 pm — 11:00 pm (Dinner)<br/><br/>
+          <strong>Monday</strong><br/>
+          Closed — the kitchen rests
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-block">
+        <div class="ib-label">Location</div>
+        <div class="ib-val">
+          <strong>Ember & Salt</strong><br/>
+          Camino Costero 14,<br/>
+          San José del Cabo 23403<br/>
+          México
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-block">
+        <div class="ib-label">Contact</div>
+        <div class="ib-val">
+          <strong>+1 (624) 105 6635</strong><br/>
+          hello@embersalt.com
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-block">
+        <div class="ib-label">Dress Code</div>
+        <div class="ib-val">Smart casual. Come comfortable. Stay long.</div>
+      </div>
+    </div>
+    <div class="rr-quote">"The table is yours for the evening. There is no rush."</div>
+  </div>
+</div>
+
+<!-- PRIVATE DINING -->
+<section class="private-section">
+  <div class="pv-inner">
+    <div class="rv">
+      <div class="pv-tag">Private Dining</div>
+      <h2 class="pv-h2">A room<br/>of your <em>own.</em></h2>
+      <p class="pv-p">Our private dining room seats up to eighteen guests around a single long table. The chef will cook a menu around you — your preferences, your occasion, your evening.</p>
+      <a href="mailto:hello@embersalt.com" class="btn-enquire">Enquire About Private Dining →</a>
+    </div>
+    <div class="pv-details rv d2">
+      <div class="pvd"><span class="pvd-l">Capacity</span><span class="pvd-v">Up to 18 guests</span></div>
+      <div class="pvd"><span class="pvd-l">Menu</span><span class="pvd-v">Bespoke tasting menu</span></div>
+      <div class="pvd"><span class="pvd-l">Wine</span><span class="pvd-v">Sommelier pairing available</span></div>
+      <div class="pvd"><span class="pvd-l">Availability</span><span class="pvd-v">Tuesday — Sunday evenings</span></div>
+      <div class="pvd"><span class="pvd-l">Minimum spend</span><span class="pvd-v">€1,800 per event</span></div>
+      <div class="pvd"><span class="pvd-l">Enquiries</span><span class="pvd-v">hello@embersalt.com</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<div class="map-section">
+  <div class="map-bg">
+    <div class="map-grid"></div>
+    <div class="map-pin">
+      <div class="map-pin-dot"></div>
+      <div class="map-pin-label">Ember & Salt</div>
+    </div>
+  </div>
+  <div class="map-address">
+    <div class="ma-label">Find Us</div>
+    <div class="ma-val">Camino Costero 14, San José del Cabo</div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-top">
+    <div class="ft-brand"><a href="ember-index.html" class="ft-logo">Ember <span>&</span> Salt</a><p>A coastal table shaped by fire, salt, and the generosity of the Mediterranean shore.</p></div>
+    <div class="ft-col"><h4>Visit</h4><ul><li><a href="ember-reservations.html">Reservations</a></li><li><a href="ember-reservations.html">Hours & Location</a></li><li><a href="ember-reservations.html">Private Dining</a></li></ul></div>
+    <div class="ft-col"><h4>Discover</h4><ul><li><a href="ember-menu.html">Menu</a></li><li><a href="ember-about.html">Our Story</a></li><li><a href="ember-about.html">The Team</a></li></ul></div>
+    <div class="ft-col"><h4>Contact</h4><ul><li><a href="#">+1 (624) 105 6635</a></li><li><a href="#">hello@embersalt.com</a></li></ul></div>
+  </div>
+  <div class="ft-bottom"><p>© 2026 Ember & Salt — Portfolio by Soham Gorhe</p></div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur.style.left=mx+'px';cur.style.top=my+'px';curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';cur.style.background='var(--gold)';});el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';cur.style.background='var(--terra)';});});
+const ldFill=document.getElementById('ldFill'),loader=document.getElementById('loader');
+gsap.to('.ld-name-inner',{y:0,duration:.8,ease:'power3.out',delay:.2});
+let lp=0;const liv=setInterval(()=>{lp+=Math.random()*7+3;if(lp>=100){lp=100;clearInterval(liv);setTimeout(()=>gsap.to(loader,{opacity:0,duration:.7,ease:'power2.in',onComplete:()=>{loader.style.display='none';}}),300);}ldFill.style.width=lp+'%';},60);
+const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in');});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.btn-submit');
+  btn.textContent='Reservation Confirmed ✓';
+  btn.style.background='var(--olive)';
+  setTimeout(()=>{btn.textContent='Confirm Reservation';btn.style.background='';},3000);
+}
+</script>
+</body>
+</html>

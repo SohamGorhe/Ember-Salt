@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Menu — Ember & Salt</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+:root{--sand:#F0E8D8;--cream:#FAF6EF;--charcoal:#1C1916;--bark:#2E2420;--terra:#C4622D;--olive:#4A5240;--gold:#B8975A;--stone:#8A7E72;--linen:#E8DDD0;--f-display:'Cormorant Garamond',serif;--f-body:'Jost',sans-serif;--f-menu:'EB Garamond',serif;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}html{font-size:16px;}
+body{background:var(--cream);color:var(--charcoal);font-family:var(--f-body);overflow-x:hidden;cursor:none;}
+#cur{position:fixed;width:8px;height:8px;background:var(--terra);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;}
+#curR{position:fixed;width:32px;height:32px;border:1px solid rgba(196,98,45,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+#loader{position:fixed;inset:0;background:var(--charcoal);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;}
+.ld-name{font-family:var(--f-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:300;color:var(--sand);letter-spacing:.12em;text-transform:uppercase;overflow:hidden;}
+.ld-name-inner{display:block;transform:translateY(110%);}
+.ld-amp{color:var(--terra);font-style:italic;}
+.ld-line{width:120px;height:1px;background:rgba(240,232,216,.12);}
+.ld-fill{height:1px;background:var(--gold);width:0%;}
+.ld-sub{font-family:var(--f-body);font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(240,232,216,.28);}
+#nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:0 52px;height:72px;display:flex;align-items:center;justify-content:space-between;background:rgba(250,246,239,.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(28,25,22,.08);}
+.nav-logo{font-family:var(--f-display);font-size:1.25rem;font-weight:400;color:var(--charcoal);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;}
+.nav-logo span{font-style:italic;color:var(--gold);}
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none;}
+.nav-links a{font-family:var(--f-body);font-size:.72rem;font-weight:400;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:rgba(28,25,22,.5);transition:color .3s;}
+.nav-links a:hover,.nav-links a.active{color:var(--terra)!important;}
+.nav-reserve{font-family:var(--f-body);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:10px 24px;border:1px solid rgba(28,25,22,.2);color:var(--charcoal);transition:all .35s;}
+.nav-reserve:hover{background:var(--terra);border-color:var(--terra);color:var(--cream);}
+/* HERO */
+.menu-hero{padding:160px 52px 80px;background:var(--sand);position:relative;overflow:hidden;}
+.mh-inner{max-width:1100px;margin:0 auto;}
+.mh-tag{font-family:var(--f-body);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.mh-tag::before{content:'';width:20px;height:1px;background:var(--stone);}
+.mh-h1{font-family:var(--f-display);font-weight:300;font-size:clamp(3rem,7vw,7rem);letter-spacing:.02em;line-height:.97;color:var(--charcoal);margin-bottom:28px;}
+.mh-h1 em{font-style:italic;color:var(--terra);}
+.mh-note{font-family:var(--f-menu);font-style:italic;font-size:1.05rem;color:var(--stone);max-width:560px;line-height:1.75;}
+.mh-divider{width:100%;height:1px;background:var(--linen);margin:52px 0 0;}
+/* MENU SECTION */
+.menu-section{padding:80px 52px;border-bottom:1px solid var(--linen);}
+.menu-section:last-of-type{border-bottom:none;}
+.menu-section.dark{background:var(--charcoal);}
+.menu-section.sand{background:var(--sand);}
+.menu-section.cream{background:var(--cream);}
+.ms-inner{max-width:1100px;margin:0 auto;}
+.ms-header{display:grid;grid-template-columns:280px 1fr;gap:60px;align-items:start;margin-bottom:52px;padding-bottom:32px;border-bottom:1px solid var(--linen);}
+.menu-section.dark .ms-header{border-bottom-color:rgba(240,232,216,.08);}
+.ms-cat{font-family:var(--f-display);font-size:clamp(2rem,4vw,3.5rem);font-weight:300;letter-spacing:.04em;color:var(--charcoal);line-height:1;}
+.menu-section.dark .ms-cat{color:var(--sand);}
+.ms-desc{font-family:var(--f-menu);font-style:italic;font-size:1rem;color:var(--stone);line-height:1.75;padding-top:8px;}
+.menu-section.dark .ms-desc{color:rgba(240,232,216,.38);}
+.ms-items{display:grid;grid-template-columns:1fr 1fr;gap:0 60px;}
+.mi{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;padding:24px 0;border-bottom:1px solid var(--linen);}
+.menu-section.dark .mi{border-bottom-color:rgba(240,232,216,.06);}
+.mi-left{}
+.mi-name{font-family:var(--f-display);font-size:1.3rem;font-weight:400;letter-spacing:.02em;color:var(--charcoal);margin-bottom:4px;}
+.menu-section.dark .mi-name{color:var(--sand);}
+.mi-sub{font-family:var(--f-menu);font-style:italic;font-size:.9rem;color:var(--stone);line-height:1.5;}
+.menu-section.dark .mi-sub{color:rgba(240,232,216,.35);}
+.mi-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.mi-tag{font-family:var(--f-body);font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--linen);color:var(--stone);border-radius:2px;}
+.menu-section.dark .mi-tag{border-color:rgba(240,232,216,.1);color:rgba(240,232,216,.3);}
+.mi-tag.sig{border-color:var(--terra);color:var(--terra);}
+.mi-price{font-family:var(--f-body);font-size:.85rem;color:var(--stone);white-space:nowrap;padding-top:4px;}
+.menu-section.dark .mi-price{color:rgba(240,232,216,.3);}
+/* WINE */
+.wine-section{padding:80px 52px;background:var(--bark);}
+.ws-inner{max-width:1100px;margin:0 auto;}
+.ws-h2{font-family:var(--f-display);font-weight:300;font-size:clamp(2rem,4vw,3.5rem);letter-spacing:.04em;color:var(--sand);margin-bottom:16px;}
+.ws-sub{font-family:var(--f-menu);font-style:italic;font-size:1rem;color:rgba(240,232,216,.38);margin-bottom:64px;max-width:500px;line-height:1.72;}
+.wine-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(240,232,216,.06);}
+.wine-cat{background:var(--bark);padding:40px 32px;}
+.wc-region{font-family:var(--f-body);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,232,216,.22);margin-bottom:20px;}
+.wc-name{font-family:var(--f-display);font-size:1.5rem;font-weight:300;color:var(--sand);margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid rgba(240,232,216,.08);}
+.wine-item{padding:14px 0;border-bottom:1px solid rgba(240,232,216,.05);display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+.wine-item:last-child{border-bottom:none;}
+.wi-name{font-family:var(--f-menu);font-size:.95rem;color:rgba(240,232,216,.55);}
+.wi-price{font-family:var(--f-body);font-size:.75rem;color:rgba(240,232,216,.3);white-space:nowrap;}
+/* TASTING */
+.tasting-section{padding:120px 52px;background:var(--charcoal);text-align:center;}
+.ts-inner{max-width:700px;margin:0 auto;}
+.ts-tag{font-family:var(--f-body);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;justify-content:center;gap:12px;}
+.ts-tag::before,.ts-tag::after{content:'';width:16px;height:1px;background:var(--gold);}
+.ts-h2{font-family:var(--f-display);font-weight:300;font-size:clamp(2rem,5vw,4.5rem);letter-spacing:.02em;color:var(--sand);line-height:1.08;margin-bottom:20px;}
+.ts-h2 em{font-style:italic;color:var(--terra);}
+.ts-p{font-family:var(--f-menu);font-style:italic;font-size:1.05rem;color:rgba(240,232,216,.38);line-height:1.78;margin-bottom:48px;}
+.ts-courses{display:flex;flex-direction:column;gap:0;margin-bottom:52px;border-top:1px solid rgba(240,232,216,.06);}
+.ts-course{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid rgba(240,232,216,.06);}
+.tsc-name{font-family:var(--f-menu);font-size:1rem;color:rgba(240,232,216,.55);text-align:left;}
+.tsc-num{font-family:var(--f-body);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,232,216,.22);}
+.ts-price{font-family:var(--f-display);font-size:2.5rem;font-weight:300;color:var(--sand);letter-spacing:.04em;margin-bottom:8px;}
+.ts-price-note{font-family:var(--f-body);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,232,216,.25);margin-bottom:36px;}
+.btn-reserve{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-body);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;background:var(--terra);color:var(--cream);padding:14px 32px;text-decoration:none;transition:background .3s,transform .3s;}
+.btn-reserve:hover{background:#A8521F;transform:translateY(-2px);}
+/* FOOTER */
+footer{background:var(--bark);padding:72px 52px 44px;}
+.ft-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:60px;padding-bottom:52px;border-bottom:1px solid rgba(240,232,216,.06);margin-bottom:36px;}
+.ft-brand .ft-logo{font-family:var(--f-display);font-size:1.3rem;font-weight:300;color:var(--sand);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;display:inline-block;margin-bottom:16px;}
+.ft-brand .ft-logo span{font-style:italic;color:var(--gold);}
+.ft-brand p{font-family:var(--f-menu);font-style:italic;font-size:.9rem;color:rgba(240,232,216,.28);line-height:1.7;max-width:260px;}
+.ft-col h4{font-family:var(--f-body);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,232,216,.25);margin-bottom:20px;}
+.ft-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.ft-col ul li a{font-family:var(--f-menu);font-size:.95rem;color:rgba(240,232,216,.38);text-decoration:none;transition:color .2s;}
+.ft-col ul li a:hover{color:var(--sand);}
+.ft-bottom{display:flex;justify-content:space-between;align-items:center;}
+.ft-bottom p{font-family:var(--f-body);font-size:.58rem;color:rgba(240,232,216,.16);letter-spacing:.08em;}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s ease;}
+.rv.in{opacity:1;transform:none;}
+.d1{transition-delay:.1s;}.d2{transition-delay:.2s;}.d3{transition-delay:.3s;}
+@media(max-width:900px){
+  #nav{padding:0 20px;}.nav-links{display:none;}
+  .menu-hero,.menu-section,.wine-section,.tasting-section,footer{padding-left:20px;padding-right:20px;}
+  .ms-header,.ms-items{grid-template-columns:1fr;}
+  .wine-grid{grid-template-columns:1fr;}
+  .ft-top{grid-template-columns:1fr 1fr;gap:36px;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="curR"></div>
+<div id="loader"><div class="ld-name"><span class="ld-name-inner">Ember <span class="ld-amp">&</span> Salt</span></div><div class="ld-line"><div class="ld-fill" id="ldFill"></div></div><div class="ld-sub">The Menu</div></div>
+<nav id="nav">
+  <a href="ember-index.html" class="nav-logo">Ember <span>&</span> Salt</a>
+  <ul class="nav-links">
+    <li><a href="ember-index.html#intro">Our Story</a></li>
+    <li><a href="ember-menu.html" class="active">Menu</a></li>
+    <li><a href="ember-about.html">About</a></li>
+    <li><a href="ember-reservations.html">Location</a></li>
+  </ul>
+  <a href="ember-reservations.html" class="nav-reserve">Reserve a Table</a>
+</nav>
+
+<div class="menu-hero">
+  <div class="mh-inner">
+    <div class="mh-tag rv">Tuesday — Sunday</div>
+    <h1 class="mh-h1 rv d1">What the sea<br/>gave us <em>today.</em></h1>
+    <p class="mh-note rv d2">Our menu is written each morning around what arrived overnight. Dishes change daily. What you see here reflects tonight's selection — some items may vary.</p>
+    <div class="mh-divider"></div>
+  </div>
+</div>
+
+<!-- STARTERS -->
+<div class="menu-section cream">
+  <div class="ms-inner">
+    <div class="ms-header rv">
+      <div class="ms-cat">To Begin</div>
+      <p class="ms-desc">Small plates meant for sharing. Order liberally — the kitchen moves at the pace of the fire, not the clock.</p>
+    </div>
+    <div class="ms-items">
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Sea Bass Crudo</div><div class="mi-sub">Coastal citrus, Calabrian chilli, bottarga, micro herbs</div><div class="mi-tags"><span class="mi-tag sig">Signature</span><span class="mi-tag">Raw</span></div></div><div class="mi-price">€32</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Burrata & Heritage Tomato</div><div class="mi-sub">Aged balsamic, fleur de sel, basil oil, slow-dried tomatoes</div><div class="mi-tags"><span class="mi-tag">Vegetarian</span><span class="mi-tag">Seasonal</span></div></div><div class="mi-price">€22</div></div>
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Wood-fired Squid</div><div class="mi-sub">Olive oil, garlic, charred lemon, aioli</div><div class="mi-tags"><span class="mi-tag">Wood-fired</span></div></div><div class="mi-price">€28</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Bread & Olive Oil</div><div class="mi-sub">House sourdough, Arbequina olive oil, fleur de sel</div><div class="mi-tags"><span class="mi-tag">Vegan</span></div></div><div class="mi-price">€9</div></div>
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Seared Scallops</div><div class="mi-sub">Cauliflower purée, hazelnut butter, chive oil</div><div class="mi-tags"><span class="mi-tag sig">Chef's pick</span></div></div><div class="mi-price">€36</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Marinated Anchovies</div><div class="mi-sub">White wine, garlic, parsley, toasted bread</div></div><div class="mi-price">€16</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FROM THE SEA -->
+<div class="menu-section dark">
+  <div class="ms-inner">
+    <div class="ms-header rv">
+      <div class="ms-cat">From the Sea</div>
+      <p class="ms-desc">Our fisherman arrives before dawn. Every piece was swimming yesterday. Every piece passes through fire today.</p>
+    </div>
+    <div class="ms-items">
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Grilled Langoustines</div><div class="mi-sub">Lemon oil, sea herbs, smoked butter, olive wood ash</div><div class="mi-tags"><span class="mi-tag sig">Signature</span><span class="mi-tag">Live catch</span></div></div><div class="mi-price">€38</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Charred Octopus</div><div class="mi-sub">Romesco, crisp potatoes, smoked paprika, lemon</div><div class="mi-tags"><span class="mi-tag">Wood-fired</span></div></div><div class="mi-price">€34</div></div>
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Whole Sea Bass</div><div class="mi-sub">Salt-baked, fennel, olive oil, herbs. Serves 2</div><div class="mi-tags"><span class="mi-tag">For two</span><span class="mi-tag">Daily catch</span></div></div><div class="mi-price">€72</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Prawn Saganaki</div><div class="mi-sub">Tomato, ouzo, feta, oregano, crusty bread</div><div class="mi-tags"><span class="mi-tag">Greek-inspired</span></div></div><div class="mi-price">€30</div></div>
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Grilled Turbot</div><div class="mi-sub">Brown butter, capers, parsley, lemon. Seasonal</div></div><div class="mi-price">€52</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Mussels in White Wine</div><div class="mi-sub">Garlic, cream, thyme, grilled bread</div><div class="mi-tags"><span class="mi-tag">Sustainable</span></div></div><div class="mi-price">€24</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FROM THE LAND -->
+<div class="menu-section sand">
+  <div class="ms-inner">
+    <div class="ms-header rv">
+      <div class="ms-cat">From the Land</div>
+      <p class="ms-desc">The hearth does not discriminate. Lamb, chicken, and the season's finest vegetables — all meet the same fire.</p>
+    </div>
+    <div class="ms-items">
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Slow-roasted Lamb Shoulder</div><div class="mi-sub">8 hours, olive wood, harissa, jus. Serves 2</div><div class="mi-tags"><span class="mi-tag sig">Signature</span><span class="mi-tag">For two</span></div></div><div class="mi-price">€68</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Wood-fired Chicken</div><div class="mi-sub">Preserved lemon, thyme butter, roasting jus</div></div><div class="mi-price">€38</div></div>
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Grilled Seasonal Vegetables</div><div class="mi-sub">Whatever is perfect today, tahini verde, dukkah</div><div class="mi-tags"><span class="mi-tag">Vegan</span><span class="mi-tag">Seasonal</span></div></div><div class="mi-price">€24</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Wagyu Bavette</div><div class="mi-sub">Chimichurri, bone marrow butter, crisp shallots</div><div class="mi-tags"><span class="mi-tag sig">Chef's pick</span></div></div><div class="mi-price">€58</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DESSERTS -->
+<div class="menu-section cream">
+  <div class="ms-inner">
+    <div class="ms-header rv">
+      <div class="ms-cat">To Finish</div>
+      <p class="ms-desc">Stay for dessert. The evening is not over until the table is empty and the candles are low.</p>
+    </div>
+    <div class="ms-items">
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Burnt Basque Cheesecake</div><div class="mi-sub">Honey, fleur de sel, fresh thyme</div><div class="mi-tags"><span class="mi-tag sig">Signature</span></div></div><div class="mi-price">€14</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Olive Oil Cake</div><div class="mi-sub">Blood orange, mascarpone, crushed pistachio</div><div class="mi-tags"><span class="mi-tag">Vegetarian</span></div></div><div class="mi-price">€16</div></div>
+      <div class="mi rv"><div class="mi-left"><div class="mi-name">Citrus Panna Cotta</div><div class="mi-sub">Saffron cream, candied lemon zest, almond tuile</div></div><div class="mi-price">€13</div></div>
+      <div class="mi rv d1"><div class="mi-left"><div class="mi-name">Selection of Cheeses</div><div class="mi-sub">Three seasonal cheeses, honey, quince, walnut</div></div><div class="mi-price">€22</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WINE -->
+<div class="wine-section">
+  <div class="ws-inner">
+    <h2 class="ws-h2 rv">The Wine List</h2>
+    <p class="ws-sub rv d1">Our sommelier selects each bottle for the way it sits beside the sea. Ask us — we will always find something unexpected.</p>
+    <div class="wine-grid">
+      <div class="wine-cat rv d1">
+        <div class="wc-region">Spain · Greece · Italy</div>
+        <div class="wc-name">White Wines</div>
+        <div class="wine-item"><span class="wi-name">Albariño, Rías Baixas 2023</span><span class="wi-price">€58</span></div>
+        <div class="wine-item"><span class="wi-name">Assyrtiko, Santorini 2022</span><span class="wi-price">€72</span></div>
+        <div class="wine-item"><span class="wi-name">Vermentino, Sardinia 2023</span><span class="wi-price">€54</span></div>
+        <div class="wine-item"><span class="wi-name">Soave Classico, Veneto 2022</span><span class="wi-price">€48</span></div>
+        <div class="wine-item"><span class="wi-name">Godello, Valdeorras 2022</span><span class="wi-price">€62</span></div>
+      </div>
+      <div class="wine-cat rv d2">
+        <div class="wc-region">France · Spain · Portugal</div>
+        <div class="wc-name">Red Wines</div>
+        <div class="wine-item"><span class="wi-name">Rioja Reserva, Tempranillo 2019</span><span class="wi-price">€68</span></div>
+        <div class="wine-item"><span class="wi-name">Côtes du Rhône, Grenache 2021</span><span class="wi-price">€56</span></div>
+        <div class="wine-item"><span class="wi-name">Alentejo, Aragonez 2020</span><span class="wi-price">€62</span></div>
+        <div class="wine-item"><span class="wi-name">Chianti Classico DOCG 2020</span><span class="wi-price">€74</span></div>
+        <div class="wine-item"><span class="wi-name">Primitivo, Puglia 2021</span><span class="wi-price">€52</span></div>
+      </div>
+      <div class="wine-cat rv d3">
+        <div class="wc-region">France · Italy</div>
+        <div class="wc-name">Sparkling & Rosé</div>
+        <div class="wine-item"><span class="wi-name">Champagne Billecart-Salmon NV</span><span class="wi-price">€115</span></div>
+        <div class="wine-item"><span class="wi-name">Prosecco di Valdobbiadene DOCG</span><span class="wi-price">€48</span></div>
+        <div class="wine-item"><span class="wi-name">Cava Brut Reserva, Penedès</span><span class="wi-price">€42</span></div>
+        <div class="wine-item"><span class="wi-name">Provence Rosé, Côtes de 2023</span><span class="wi-price">€56</span></div>
+        <div class="wine-item"><span class="wi-name">Orange Wine, Ramato 2022</span><span class="wi-price">€64</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASTING MENU -->
+<div class="tasting-section">
+  <div class="ts-inner rv">
+    <div class="ts-tag">Chef's Tasting</div>
+    <h2 class="ts-h2">The full <em>journey.</em></h2>
+    <p class="ts-p">Seven courses built around what the market gave us this morning. No choices — only trust, and the knowledge that the kitchen will not disappoint.</p>
+    <div class="ts-courses">
+      <div class="ts-course"><span class="tsc-name">Amuse-bouche from the kitchen</span><span class="tsc-num">I</span></div>
+      <div class="ts-course"><span class="tsc-name">Crudo & raw preparations</span><span class="tsc-num">II</span></div>
+      <div class="ts-course"><span class="tsc-name">Wood-fired small plates</span><span class="tsc-num">III</span></div>
+      <div class="ts-course"><span class="tsc-name">Pasta or grain course</span><span class="tsc-num">IV</span></div>
+      <div class="ts-course"><span class="tsc-name">Fish from the morning catch</span><span class="tsc-num">V</span></div>
+      <div class="ts-course"><span class="tsc-name">Meat from the hearth</span><span class="tsc-num">VI</span></div>
+      <div class="ts-course"><span class="tsc-name">Pastry & petit fours</span><span class="tsc-num">VII</span></div>
+    </div>
+    <div class="ts-price">€145</div>
+    <div class="ts-price-note">Per person · Wine pairing +€85</div>
+    <a href="ember-reservations.html" class="btn-reserve">Reserve for the Tasting Menu</a>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-top">
+    <div class="ft-brand"><a href="ember-index.html" class="ft-logo">Ember <span>&</span> Salt</a><p>A coastal table shaped by fire, salt, and the generosity of the Mediterranean shore.</p></div>
+    <div class="ft-col"><h4>Visit</h4><ul><li><a href="ember-reservations.html">Reservations</a></li><li><a href="ember-reservations.html">Hours & Location</a></li><li><a href="ember-reservations.html">Private Dining</a></li></ul></div>
+    <div class="ft-col"><h4>Discover</h4><ul><li><a href="ember-menu.html">Menu</a></li><li><a href="ember-about.html">Our Story</a></li><li><a href="ember-about.html">The Team</a></li></ul></div>
+    <div class="ft-col"><h4>Contact</h4><ul><li><a href="#">+1 (624) 105 6635</a></li><li><a href="#">hello@embersalt.com</a></li></ul></div>
+  </div>
+  <div class="ft-bottom"><p>© 2026 Ember & Salt — Portfolio by Soham Gorhe</p></div>
+</footer>
+
+<script>
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;cur.style.left=mx+'px';cur.style.top=my+'px';curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(a);})();
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';cur.style.background='var(--gold)';});el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';cur.style.background='var(--terra)';});});
+const ldFill=document.getElementById('ldFill'),loader=document.getElementById('loader');
+gsap.to('.ld-name-inner',{y:0,duration:.8,ease:'power3.out',delay:.2});
+let lp=0;const liv=setInterval(()=>{lp+=Math.random()*7+3;if(lp>=100){lp=100;clearInterval(liv);setTimeout(()=>gsap.to(loader,{opacity:0,duration:.7,ease:'power2.in',onComplete:()=>{loader.style.display='none';}}),300);}ldFill.style.width=lp+'%';},60);
+const ro=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in');});},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>
